@@ -1,7 +1,3 @@
-const business = "/business";
-const personal = "/personal";
-const urgent = "/urgent";
-
 const express = require("express");
 const route = express.Router();
 const {
@@ -12,14 +8,13 @@ const {
   createTodoTaskBusiness,
   createTodoTaskPersonal,
   createTodoTaskUrgent,
-  updateTodoTaskBusiness,
-  updateTodoTaskPersonal,
-  updateTodoTaskUrgent,
-  deleteTodoTaskBusiness,
-  deleteTodoTaskPersonal,
-  deleteTodoTaskUrgent,
+  deleteTask,
+  updatedTask,
 } = require("./../controller/todoTaskController");
 
+const validateToken = require("./../middleware/tokenValidator");
+
+route.use(validateToken);
 route.get("/getTasks", getAll);
 route.get("/business", getBusiness);
 route.get("/personal", getPersonal);
@@ -33,14 +28,10 @@ route.post("/urgent", createTodoTaskUrgent);
 
 // *======================================================================================
 
-route.put("/business", updateTodoTaskBusiness);
-route.put("/personal", updateTodoTaskPersonal);
-route.put("/urgent", updateTodoTaskUrgent);
+route.put("/update", updatedTask);
 
 // *======================================================================================
 
-route.delete("/business", deleteTodoTaskBusiness);
-route.delete("/personal", deleteTodoTaskPersonal);
-route.delete("/urgent", deleteTodoTaskUrgent);
+route.delete("/delete", deleteTask);
 
 module.exports = route;

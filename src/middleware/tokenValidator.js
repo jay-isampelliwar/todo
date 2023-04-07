@@ -7,7 +7,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
 
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1];
-    jwt.verify(token, "KEY", (err, data) => {
+    jwt.verify(token, process.env.TOKEN_KEY, (err, data) => {
       if (err) {
         res.status(401);
         throw new Error("Unauthorize User");
