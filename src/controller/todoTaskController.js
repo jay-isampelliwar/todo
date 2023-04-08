@@ -3,66 +3,40 @@ const TodoTask = require("./../models/todoTaskMode");
 
 const getAll = asyncHandler(async (req, res) => {
   const todoList = await TodoTask.find({ user_id: req.user.id });
-  res.json(todoList);
+  console.log(todoList);
+  res.json({ todoList });
 });
 const getBusiness = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
-    return todo.catagory === "business";
+    return todo.category === "business";
   });
   res.json({ businessTodoList });
 });
 const getPersonal = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
-    return todo.catagory === "personal";
+    return todo.category === "personal";
   });
   res.json({ businessTodoList });
 });
 const getUrgent = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
-    return todo.catagory === "urgent";
+    return todo.category === "urgent";
   });
   res.json({ businessTodoList });
 });
 
 // *======================================================================================
 
-const createTodoTaskBusiness = asyncHandler(async (req, res) => {
-  const { id, title, catagory, isDone } = req.body;
-
+const createTodoTask = asyncHandler(async (req, res) => {
+  const { id, title, category, isDone } = req.body;
+  console.log(req.user);
   const task = new TodoTask({
     id,
     title,
-    catagory,
-    isDone,
-    user_id: req.user.id,
-  });
-
-  task.save();
-  res.json(task);
-});
-const createTodoTaskPersonal = asyncHandler(async (req, res) => {
-  const { id, title, catagory, isDone } = req.body;
-  const task = new TodoTask({
-    id,
-    title,
-    catagory,
-    isDone,
-    user_id: req.user.id,
-  });
-
-  task.save();
-  res.json(task);
-});
-const createTodoTaskUrgent = asyncHandler(async (req, res) => {
-  const { id, title, catagory, isDone } = req.body;
-
-  const task = new TodoTask({
-    id,
-    title,
-    catagory,
+    category,
     isDone,
     user_id: req.user.id,
   });
@@ -74,22 +48,28 @@ const createTodoTaskUrgent = asyncHandler(async (req, res) => {
 // *======================================================================================
 
 const updatedTask = asyncHandler(async (req, res) => {
-  const { id, title, catagory, isDone } = req.body;
+  const { id, title, category, isDone } = req.body;
 
   const task = await TodoTask.findOne({ id: id });
 
-  console.log(task);
+  // console.log(task);
   if (!task) {
     res.status(404);
     throw new Error("Task not found");
+  }
+
+  if (task.user_id !== req.user.id) {
+    res.status(403);
+    throw new Error("User don't have permission to update contact");
   }
 
   await TodoTask.deleteOne({ id: id });
   const updatedTask = new TodoTask({
     id,
     title,
-    catagory,
+    category,
     isDone,
+    user_id: req.user.id,
   });
 
   updatedTask.save();
@@ -99,31 +79,31 @@ const updatedTask = asyncHandler(async (req, res) => {
 // *======================================================================================
 
 const deleteTask = asyncHandler(async (req, res) => {
-  const task = await TodoTask.findOne({ id: id });
+  const task = await TodoTask.findOne({ id: req.body.id });
 
-  console.log(task);
+  // console.log(task);
   if (!task) {
     res.status(404);
     throw new Error("Task not found");
   }
-  await TodoTask.deleteOne({ id: id });
+
+  if (task.user_id !== req.user.id) {
+    res.status(403);
+    throw new Error("User don't have permission to delete contact");
+  }
+
+  await TodoTask.deleteOne({ id: req.body.id });
   res.json(task);
 });
 
 // *======================================================================================
-
-async function validTaskID(id) {
-  return null;
-}
 
 module.exports = {
   getAll,
   getBusiness,
   getPersonal,
   getUrgent,
-  createTodoTaskBusiness,
-  createTodoTaskPersonal,
-  createTodoTaskUrgent,
+  createTodoTask,
   updatedTask,
   deleteTask,
 };

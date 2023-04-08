@@ -15,7 +15,7 @@ const todoTaskModel = new Schema(
       required: true,
       unique: true,
     },
-    catagory: {
+    category: {
       type: String,
       required: true,
     },

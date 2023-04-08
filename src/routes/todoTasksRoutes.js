@@ -5,9 +5,7 @@ const {
   getBusiness,
   getPersonal,
   getUrgent,
-  createTodoTaskBusiness,
-  createTodoTaskPersonal,
-  createTodoTaskUrgent,
+  createTodoTask,
   deleteTask,
   updatedTask,
 } = require("./../controller/todoTaskController");
@@ -22,9 +20,7 @@ route.get("/urgent", getUrgent);
 
 // *======================================================================================
 
-route.post("/business", createTodoTaskBusiness);
-route.post("/personal", createTodoTaskPersonal);
-route.post("/urgent", createTodoTaskUrgent);
+route.post("/create", createTodoTask);
 
 // *======================================================================================
 

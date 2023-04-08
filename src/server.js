@@ -10,8 +10,8 @@ const app = express();
 dbConnect();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use("/", userRoutes);
-app.use("/", todoTaskRoutes);
+app.use("/user", userRoutes);
+app.use("/todo", todoTaskRoutes);
 app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
