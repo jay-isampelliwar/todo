@@ -31,6 +31,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid Credentials");
   }
 });
+
 const userDetails = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: req.body.phone });
 
@@ -44,6 +45,7 @@ const userDetails = asyncHandler(async (req, res) => {
     email: user.email,
   });
 });
+
 const createUser = asyncHandler(async (req, res) => {
   const { username, phone, email, password } = req.body;
 
@@ -69,4 +71,28 @@ const createUser = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { userDetails, loginUser, createUser };
+const forgetPassword = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ phone: req.body.phone });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("Phone Number is wrong");
+  }
+
+  const hashedPass = await bcrypt.hash(req.body.newPassword, 10);
+  const newDetails = {
+    username: user.username,
+    email: user.email,
+    phone: user.phone,
+    password: hashedPass,
+  };
+  await User.updateOne({ phone: req.body.phone }, newDetails, { new: true });
+
+  res.json({
+    username: user.username,
+    phone: user.phone,
+    email: user.email,
+  });
+});
+
+module.exports = { userDetails, loginUser, createUser, forgetPassword };

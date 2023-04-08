@@ -3,9 +3,10 @@ const TodoTask = require("./../models/todoTaskMode");
 
 const getAll = asyncHandler(async (req, res) => {
   const todoList = await TodoTask.find({ user_id: req.user.id });
-  console.log(todoList);
+  // console.log(todoList);
   res.json({ todoList });
 });
+
 const getBusiness = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
@@ -13,6 +14,7 @@ const getBusiness = asyncHandler(async (req, res) => {
   });
   res.json({ businessTodoList });
 });
+
 const getPersonal = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
@@ -20,6 +22,7 @@ const getPersonal = asyncHandler(async (req, res) => {
   });
   res.json({ businessTodoList });
 });
+
 const getUrgent = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
   const businessTodoList = allTodo.filter((todo) => {
@@ -32,7 +35,7 @@ const getUrgent = asyncHandler(async (req, res) => {
 
 const createTodoTask = asyncHandler(async (req, res) => {
   const { id, title, category, isDone } = req.body;
-  console.log(req.user);
+  // console.log(req.user);
   const task = new TodoTask({
     id,
     title,
@@ -60,7 +63,7 @@ const updatedTask = asyncHandler(async (req, res) => {
 
   if (task.user_id !== req.user.id) {
     res.status(403);
-    throw new Error("User don't have permission to update contact");
+    throw new Error("User don't have permission to update task");
   }
 
   await TodoTask.deleteOne({ id: id });
@@ -89,7 +92,7 @@ const deleteTask = asyncHandler(async (req, res) => {
 
   if (task.user_id !== req.user.id) {
     res.status(403);
-    throw new Error("User don't have permission to delete contact");
+    throw new Error("User don't have permission to delete task");
   }
 
   await TodoTask.deleteOne({ id: req.body.id });
