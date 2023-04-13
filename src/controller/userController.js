@@ -75,7 +75,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: req.body.phone });
 
   if (!user) {
-    res.status(404);
+    res.status(400);
     throw new Error("Phone Number is wrong");
   }
 

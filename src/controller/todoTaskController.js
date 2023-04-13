@@ -4,7 +4,10 @@ const TodoTask = require("./../models/todoTaskMode");
 const getAll = asyncHandler(async (req, res) => {
   const todoList = await TodoTask.find({ user_id: req.user.id });
   // console.log(todoList);
-  res.json({ todoList });
+  res.json({
+    name: req.user.name,
+    data : [todoList]
+  });
 });
 
 const getBusiness = asyncHandler(async (req, res) => {
@@ -12,23 +15,23 @@ const getBusiness = asyncHandler(async (req, res) => {
   const businessTodoList = allTodo.filter((todo) => {
     return todo.category === "business";
   });
-  res.json({ businessTodoList });
+  res.json({data: [businessTodoList] });
 });
 
 const getPersonal = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
-  const businessTodoList = allTodo.filter((todo) => {
+  const personalTodoList = allTodo.filter((todo) => {
     return todo.category === "personal";
   });
-  res.json({ businessTodoList });
+  res.json({ data: [personalTodoList] });
 });
 
 const getUrgent = asyncHandler(async (req, res) => {
   const allTodo = await TodoTask.find({ user_id: req.user.id });
-  const businessTodoList = allTodo.filter((todo) => {
+  const urgentTodoList = allTodo.filter((todo) => {
     return todo.category === "urgent";
   });
-  res.json({ businessTodoList });
+  res.json({ data: [urgentTodoList] });
 });
 
 // *======================================================================================
@@ -45,7 +48,11 @@ const createTodoTask = asyncHandler(async (req, res) => {
   });
 
   task.save();
-  res.json(task);
+  res.status(201).json( {
+    message: "Task is created"
+    ,
+    task
+  });
 });
 
 // *======================================================================================
@@ -76,7 +83,11 @@ const updatedTask = asyncHandler(async (req, res) => {
   });
 
   updatedTask.save();
-  res.json(updatedTask);
+  res.json( {
+    message: "Updated"
+    ,
+    task
+  });
 });
 
 // *======================================================================================
@@ -96,7 +107,11 @@ const deleteTask = asyncHandler(async (req, res) => {
   }
 
   await TodoTask.deleteOne({ id: req.body.id });
-  res.json(task);
+  res.status(204).json( {
+    message: "Deleted"
+    ,
+    task
+  });
 });
 
 // *======================================================================================
