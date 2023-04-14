@@ -27,7 +27,10 @@ const getPersonal = asyncHandler(async (req, res) => {
   const personalTodoList = allTodo.filter((todo) => {
     return todo.category === "personal";
   });
-  res.json({ status: true, data: personalTodoList });
+  res.json({
+    status: true,
+    data: personalTodoList,
+  });
 });
 
 const getUrgent = asyncHandler(async (req, res) => {
@@ -55,7 +58,6 @@ const createTodoTask = asyncHandler(async (req, res) => {
   res.status(201).json({
     status: true,
     message: "Task is created",
-    task,
   });
 });
 
@@ -71,8 +73,7 @@ const updatedTask = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Task not found");
   }
-
-  if (task.user_id !== req.user.id) {
+  if (task.user_id.toString() !== req.user.id) {
     res.status(403);
     throw new Error("User don't have permission to update task");
   }
@@ -90,7 +91,6 @@ const updatedTask = asyncHandler(async (req, res) => {
   res.json({
     status: true,
     message: "Updated",
-    task,
   });
 });
 
@@ -105,16 +105,15 @@ const deleteTask = asyncHandler(async (req, res) => {
     throw new Error("Task not found");
   }
 
-  if (task.user_id !== req.user.id) {
+  if (task.user_id.toString() !== req.user.id) {
     res.status(403);
     throw new Error("User don't have permission to delete task");
   }
 
   await TodoTask.deleteOne({ id: req.body.id });
-  res.status(204).json({
+  res.json({
     status: true,
     message: "Deleted",
-    task,
   });
 });
 

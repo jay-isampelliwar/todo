@@ -41,14 +41,21 @@ const userDetails = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: req.body.phone });
 
   if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    res.status(404).json({
+      status: false,
+      message: "User Details",
+      data: null,
+    });
   }
   res.json({
     status: true,
-    username: user.username,
-    phone: user.phone,
-    email: user.email,
+    message: "User Details",
+    data: {
+      status: true,
+      username: user.username,
+      phone: user.phone,
+      email: user.email,
+    },
   });
 });
 
@@ -120,6 +127,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
   await User.updateOne({ phone: req.body.phone }, newDetails, { new: true });
 
   res.json({
+    status: true,
     message: "Password is updated please Login with new password",
   });
 });
