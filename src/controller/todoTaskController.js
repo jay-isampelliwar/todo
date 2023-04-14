@@ -5,8 +5,9 @@ const getAll = asyncHandler(async (req, res) => {
   const todoList = await TodoTask.find({ user_id: req.user.id });
   // console.log(todoList);
   res.json({
+    status: true,
     name: req.user.name,
-    data : [todoList]
+    data: todoList,
   });
 });
 
@@ -15,7 +16,10 @@ const getBusiness = asyncHandler(async (req, res) => {
   const businessTodoList = allTodo.filter((todo) => {
     return todo.category === "business";
   });
-  res.json({data: businessTodoList });
+  res.json({
+    status: true,
+    data: businessTodoList,
+  });
 });
 
 const getPersonal = asyncHandler(async (req, res) => {
@@ -23,7 +27,7 @@ const getPersonal = asyncHandler(async (req, res) => {
   const personalTodoList = allTodo.filter((todo) => {
     return todo.category === "personal";
   });
-  res.json({ data: [personalTodoList] });
+  res.json({ status: true, data: personalTodoList });
 });
 
 const getUrgent = asyncHandler(async (req, res) => {
@@ -31,7 +35,7 @@ const getUrgent = asyncHandler(async (req, res) => {
   const urgentTodoList = allTodo.filter((todo) => {
     return todo.category === "urgent";
   });
-  res.json({ data: [urgentTodoList] });
+  res.json({ status: true, data: urgentTodoList });
 });
 
 // *======================================================================================
@@ -48,10 +52,10 @@ const createTodoTask = asyncHandler(async (req, res) => {
   });
 
   task.save();
-  res.status(201).json( {
-    message: "Task is created"
-    ,
-    task
+  res.status(201).json({
+    status: true,
+    message: "Task is created",
+    task,
   });
 });
 
@@ -83,10 +87,10 @@ const updatedTask = asyncHandler(async (req, res) => {
   });
 
   updatedTask.save();
-  res.json( {
-    message: "Updated"
-    ,
-    task
+  res.json({
+    status: true,
+    message: "Updated",
+    task,
   });
 });
 
@@ -107,10 +111,10 @@ const deleteTask = asyncHandler(async (req, res) => {
   }
 
   await TodoTask.deleteOne({ id: req.body.id });
-  res.status(204).json( {
-    message: "Deleted"
-    ,
-    task
+  res.status(204).json({
+    status: true,
+    message: "Deleted",
+    task,
   });
 });
 

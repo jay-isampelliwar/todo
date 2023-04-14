@@ -1,7 +1,5 @@
 const nodeMailer = require("nodemailer");
 const otpSender = async (emailTo, otp) => {
-  console.log(emailTo);
-  console.log(otp);
   let transporter = nodeMailer.createTransport({
     service: "gmail",
     auth: {

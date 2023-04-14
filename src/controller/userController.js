@@ -27,7 +27,10 @@ const loginUser = asyncHandler(async (req, res) => {
       { expiresIn: "30m" }
     );
 
-    res.json({ token });
+    res.json({
+      status: true,
+      token,
+    });
   } else {
     res.status(400);
     throw new Error("Invalid Credentials");
@@ -42,6 +45,7 @@ const userDetails = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
   res.json({
+    status: true,
     username: user.username,
     phone: user.phone,
     email: user.email,
@@ -66,7 +70,6 @@ const createUser = asyncHandler(async (req, res) => {
   });
   await newUser.save();
   const otp = randomOtp();
-  // const hashedOTP = await bcrypt.hash(otp, 10);
   const newOTP = new OTP({
     user_id: newUser.id,
     otp: otp,
@@ -75,9 +78,9 @@ const createUser = asyncHandler(async (req, res) => {
   await newOTP.save();
   await otpSender.otpSender(email, otp);
 
-  console.log("c");
   res.status(201).json({
-    message: "Account is created please Login",
+    status: true,
+    message: "Please Verify OTP",
   });
 });
 
@@ -92,7 +95,10 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
 
   if (user.otp === otp) {
     await OTP.deleteOne({ otp: otp });
-    res.json({ message: "OTP Verified" });
+    res.json({
+      status: true,
+      message: "OTP Verified",
+    });
   }
 });
 
