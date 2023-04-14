@@ -1,11 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("./../models/userModel");
+const otpSender = require("./../helper/mailSender");
+const randomOtp = require("./../helper/randomOTP");
+const OTP = require("./../models/otpModel");
 const jwt = require("jsonwebtoken");
 
 const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: req.body.phone });
-
   if (!user) {
     res.status(404);
     throw new Error("User not found");
@@ -62,13 +64,36 @@ const createUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPass,
   });
-
-  newUser.save();
-  res.json({
-    username,
-    phone,
-    email,
+  await newUser.save();
+  const otp = randomOtp();
+  // const hashedOTP = await bcrypt.hash(otp, 10);
+  const newOTP = new OTP({
+    user_id: newUser.id,
+    otp: otp,
   });
+
+  await newOTP.save();
+  await otpSender.otpSender(email, otp);
+
+  console.log("c");
+  res.status(201).json({
+    message: "Account is created please Login",
+  });
+});
+
+const verifyUserOTP = asyncHandler(async (req, res) => {
+  const { otp } = req.body;
+  const user = await OTP.findOne({ otp: otp });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("Wrong OTP");
+  }
+
+  if (user.otp === otp) {
+    await OTP.deleteOne({ otp: otp });
+    res.json({ message: "OTP Verified" });
+  }
 });
 
 const forgetPassword = asyncHandler(async (req, res) => {
@@ -76,7 +101,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(400);
-    throw new Error("Phone Number is wrong");
+    throw new Error("Phone Number not found");
   }
 
   const hashedPass = await bcrypt.hash(req.body.newPassword, 10);
@@ -89,10 +114,14 @@ const forgetPassword = asyncHandler(async (req, res) => {
   await User.updateOne({ phone: req.body.phone }, newDetails, { new: true });
 
   res.json({
-    username: user.username,
-    phone: user.phone,
-    email: user.email,
+    message: "Password is updated please Login with new password",
   });
 });
 
-module.exports = { userDetails, loginUser, createUser, forgetPassword };
+module.exports = {
+  userDetails,
+  loginUser,
+  createUser,
+  forgetPassword,
+  verifyUserOTP,
+};

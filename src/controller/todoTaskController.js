@@ -15,7 +15,7 @@ const getBusiness = asyncHandler(async (req, res) => {
   const businessTodoList = allTodo.filter((todo) => {
     return todo.category === "business";
   });
-  res.json({data: [businessTodoList] });
+  res.json({data: businessTodoList });
 });
 
 const getPersonal = asyncHandler(async (req, res) => {
