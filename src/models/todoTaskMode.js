@@ -10,14 +10,11 @@ const todoTaskModel = new Schema(
       type: String,
       required: true,
     },
+
     id: {
       type: String,
       required: true,
       unique: true,
-    },
-    category: {
-      type: String,
-      required: true,
     },
     isDone: {
       type: Boolean,
