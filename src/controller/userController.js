@@ -14,6 +14,7 @@ const loginUser = asyncHandler(async (req, res) => {
       message: "User Not Found",
       token: null,
     });
+    res.end();
   }
 
   if (user.verification !== "Verified") {
@@ -22,6 +23,7 @@ const loginUser = asyncHandler(async (req, res) => {
       message: "Please Verify Your account",
       token: null,
     });
+    res.end();
   }
 
   if (user && (await bcrypt.compare(req.body.password, user.password))) {
@@ -43,12 +45,14 @@ const loginUser = asyncHandler(async (req, res) => {
       message: "Token",
       token,
     });
+    res.end();
   } else {
     res.status(400).json({
       status: false,
       message: "Invalid Credentials",
       token: null,
     });
+    res.end();
   }
 });
 
