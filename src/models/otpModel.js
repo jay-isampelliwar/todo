@@ -5,6 +5,10 @@ const otpModel = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
   otp: {
     type: String,
     required: true,

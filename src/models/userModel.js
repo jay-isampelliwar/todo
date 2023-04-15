@@ -20,6 +20,11 @@ const userModel = new Schema(
       type: String,
       required: [true, "Please add Contact phone"],
     },
+    verification: {
+      type: String,
+      enum: ["Not Verified", "Pending", "Verified"],
+      default: "Not Verified",
+    },
   },
   {
     timestamps: true,
