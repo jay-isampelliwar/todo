@@ -7,23 +7,21 @@ const OTP = require("./../models/otpModel");
 const jwt = require("jsonwebtoken");
 
 const loginUser = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ phone: req.body.phone });
+  const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       status: false,
       message: "User Not Found",
       token: null,
     });
-    res.end();
   }
 
   if (user.verification !== "Verified") {
-    res.status(404).json({
+    return res.status(404).json({
       status: false,
       message: "Please Verify Your account",
       token: null,
     });
-    res.end();
   }
 
   if (user && (await bcrypt.compare(req.body.password, user.password))) {
@@ -40,19 +38,17 @@ const loginUser = asyncHandler(async (req, res) => {
       { expiresIn: "30m" }
     );
 
-    res.json({
+    return res.json({
       status: true,
       message: "Token",
       token,
     });
-    res.end();
   } else {
-    res.status(400).json({
+    return res.status(400).json({
       status: false,
       message: "Invalid Credentials",
       token: null,
     });
-    res.end();
   }
 });
 
@@ -60,14 +56,13 @@ const userDetails = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   console.log(req.body.email);
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       status: false,
       message: "User Details",
       data: null,
     });
-    res.end();
   }
-  res.json({
+  return res.json({
     status: true,
     message: "User Details",
     data: {
@@ -77,13 +72,12 @@ const userDetails = asyncHandler(async (req, res) => {
       email: user.email,
     },
   });
-  res.end();
 });
 
 const createUser = asyncHandler(async (req, res) => {
   const { username, phone, email, password } = req.body;
 
-  const user = await User.findOne({ phone: phone });
+  const user = await User.findOne({ email: email });
   if (user) {
     res.status(400);
     throw new Error("You already have an account");
@@ -108,11 +102,10 @@ const createUser = asyncHandler(async (req, res) => {
   newOTP.save();
   await otpSender.otpSender(email, otp);
 
-  res.status(201).json({
+  return res.status(201).json({
     status: true,
     message: "Please Verify OTP",
   });
-  res.end();
 });
 
 const verifyUserOTP = asyncHandler(async (req, res) => {
@@ -130,11 +123,10 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     user.verification = "Verified";
     user.save();
 
-    res.json({
+    return res.json({
       status: true,
       message: "OTP Verified",
     });
-    res.end();
   } else {
     res.status(400);
     throw new Error("Wrong OTP");
@@ -156,13 +148,12 @@ const forgetPassword = asyncHandler(async (req, res) => {
     phone: user.phone,
     password: hashedPass,
   };
-  await User.updateOne({ phone: req.body.phone }, newDetails, { new: true });
+  await User.updateOne({ email: req.body.email }, newDetails, { new: true });
 
-  res.json({
+  return res.json({
     status: true,
     message: "Password is updated please Login with new password",
   });
-  res.end();
 });
 
 module.exports = {

@@ -4,11 +4,10 @@ const TodoTask = require("./../models/todoTaskMode");
 const getAll = asyncHandler(async (req, res) => {
   const todoList = await TodoTask.find({ user_id: req.user.id });
   // console.log(todoList);
-  res.json({
+  return res.json({
     status: true,
     data: todoList,
   });
-  res.end();
 });
 
 const getBusiness = asyncHandler(async (req, res) => {
@@ -16,11 +15,10 @@ const getBusiness = asyncHandler(async (req, res) => {
   const businessTodoList = allTodo.filter((todo) => {
     return todo.category === "business";
   });
-  res.json({
+  return res.json({
     status: true,
     data: businessTodoList,
   });
-  res.end();
 });
 
 const getPersonal = asyncHandler(async (req, res) => {
@@ -28,11 +26,10 @@ const getPersonal = asyncHandler(async (req, res) => {
   const personalTodoList = allTodo.filter((todo) => {
     return todo.category === "personal";
   });
-  res.json({
+  return res.json({
     status: true,
     data: personalTodoList,
   });
-  res.end();
 });
 
 const getUrgent = asyncHandler(async (req, res) => {
@@ -40,8 +37,7 @@ const getUrgent = asyncHandler(async (req, res) => {
   const urgentTodoList = allTodo.filter((todo) => {
     return todo.category === "urgent";
   });
-  res.json({ status: true, data: urgentTodoList });
-  res.end();
+  return res.json({ status: true, data: urgentTodoList });
 });
 
 // *======================================================================================
@@ -58,11 +54,10 @@ const createTodoTask = asyncHandler(async (req, res) => {
   });
 
   task.save();
-  res.status(201).json({
+  return res.status(201).json({
     status: true,
     message: "Task is created",
   });
-  res.end();
 });
 
 // *======================================================================================
@@ -92,11 +87,10 @@ const updatedTask = asyncHandler(async (req, res) => {
   });
 
   updatedTask.save();
-  res.json({
+  return res.json({
     status: true,
     message: "Updated",
   });
-  res.end();
 });
 
 // *======================================================================================
@@ -116,11 +110,10 @@ const deleteTask = asyncHandler(async (req, res) => {
   }
 
   await TodoTask.deleteOne({ id: req.body.id });
-  res.json({
+  return res.json({
     status: true,
     message: "Deleted",
   });
-  res.end();
 });
 
 // *======================================================================================
