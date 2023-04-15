@@ -9,8 +9,19 @@ const jwt = require("jsonwebtoken");
 const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phone: req.body.phone });
   if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    res.status(404).json({
+      status: false,
+      message: "User Not Found",
+      token: null,
+    });
+  }
+
+  if (user.verification !== "Verified") {
+    res.status(404).json({
+      status: false,
+      message: "Please Verify Your account",
+      token: null,
+    });
   }
 
   if (user && (await bcrypt.compare(req.body.password, user.password))) {
@@ -29,17 +40,21 @@ const loginUser = asyncHandler(async (req, res) => {
 
     res.json({
       status: true,
+      message: "Token",
       token,
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid Credentials");
+    res.status(400).json({
+      status: false,
+      message: "Invalid Credentials",
+      token: null,
+    });
   }
 });
 
 const userDetails = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ phone: req.body.phone });
-
+  const user = await User.findOne({ email: req.body.email });
+  console.log(req.body.email);
   if (!user) {
     res.status(404).json({
       status: false,
@@ -75,14 +90,16 @@ const createUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPass,
   });
+
   await newUser.save();
   const otp = randomOtp();
   const newOTP = new OTP({
     user_id: newUser.id,
     otp: otp,
+    email,
   });
 
-  await newOTP.save();
+  newOTP.save();
   await otpSender.otpSender(email, otp);
 
   res.status(201).json({
@@ -92,29 +109,36 @@ const createUser = asyncHandler(async (req, res) => {
 });
 
 const verifyUserOTP = asyncHandler(async (req, res) => {
-  const { otp } = req.body;
-  const user = await OTP.findOne({ otp: otp });
+  const { otp, email } = req.body;
+  const otpModel = await OTP.findOne({ email: email });
 
-  if (!user) {
+  if (!otpModel) {
     res.status(404);
-    throw new Error("Wrong OTP");
+    throw new Error("Invalid Email");
   }
 
-  if (user.otp === otp) {
+  if (otpModel.otp === otp) {
     await OTP.deleteOne({ otp: otp });
+    const user = await User.findOne({ email: email });
+    user.verification = "Verified";
+    user.save();
+
     res.json({
       status: true,
       message: "OTP Verified",
     });
+  } else {
+    res.status(400);
+    throw new Error("Wrong OTP");
   }
 });
 
 const forgetPassword = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ phone: req.body.phone });
+  const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
     res.status(400);
-    throw new Error("Phone Number not found");
+    throw new Error("User not found");
   }
 
   const hashedPass = await bcrypt.hash(req.body.newPassword, 10);

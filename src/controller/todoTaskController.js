@@ -6,7 +6,6 @@ const getAll = asyncHandler(async (req, res) => {
   // console.log(todoList);
   res.json({
     status: true,
-    name: req.user.name,
     data: todoList,
   });
 });
