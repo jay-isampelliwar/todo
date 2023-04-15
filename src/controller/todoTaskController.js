@@ -10,45 +10,14 @@ const getAll = asyncHandler(async (req, res) => {
   });
 });
 
-const getBusiness = asyncHandler(async (req, res) => {
-  const allTodo = await TodoTask.find({ user_id: req.user.id });
-  const businessTodoList = allTodo.filter((todo) => {
-    return todo.category === "business";
-  });
-  return res.json({
-    status: true,
-    data: businessTodoList,
-  });
-});
-
-const getPersonal = asyncHandler(async (req, res) => {
-  const allTodo = await TodoTask.find({ user_id: req.user.id });
-  const personalTodoList = allTodo.filter((todo) => {
-    return todo.category === "personal";
-  });
-  return res.json({
-    status: true,
-    data: personalTodoList,
-  });
-});
-
-const getUrgent = asyncHandler(async (req, res) => {
-  const allTodo = await TodoTask.find({ user_id: req.user.id });
-  const urgentTodoList = allTodo.filter((todo) => {
-    return todo.category === "urgent";
-  });
-  return res.json({ status: true, data: urgentTodoList });
-});
-
 // *======================================================================================
 
 const createTodoTask = asyncHandler(async (req, res) => {
-  const { id, title, category, isDone } = req.body;
+  const { id, title, isDone } = req.body;
   // console.log(req.user);
   const task = new TodoTask({
     id,
     title,
-    category,
     isDone,
     user_id: req.user.id,
   });
@@ -63,7 +32,7 @@ const createTodoTask = asyncHandler(async (req, res) => {
 // *======================================================================================
 
 const updatedTask = asyncHandler(async (req, res) => {
-  const { id, title, category, isDone } = req.body;
+  const { id, title, isDone } = req.body;
 
   const task = await TodoTask.findOne({ id: id });
 
@@ -81,7 +50,6 @@ const updatedTask = asyncHandler(async (req, res) => {
   const updatedTask = new TodoTask({
     id,
     title,
-    category,
     isDone,
     user_id: req.user.id,
   });
@@ -120,9 +88,6 @@ const deleteTask = asyncHandler(async (req, res) => {
 
 module.exports = {
   getAll,
-  getBusiness,
-  getPersonal,
-  getUrgent,
   createTodoTask,
   updatedTask,
   deleteTask,
