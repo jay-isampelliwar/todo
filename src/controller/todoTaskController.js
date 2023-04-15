@@ -8,6 +8,7 @@ const getAll = asyncHandler(async (req, res) => {
     status: true,
     data: todoList,
   });
+  res.end();
 });
 
 const getBusiness = asyncHandler(async (req, res) => {
@@ -19,6 +20,7 @@ const getBusiness = asyncHandler(async (req, res) => {
     status: true,
     data: businessTodoList,
   });
+  res.end();
 });
 
 const getPersonal = asyncHandler(async (req, res) => {
@@ -30,6 +32,7 @@ const getPersonal = asyncHandler(async (req, res) => {
     status: true,
     data: personalTodoList,
   });
+  res.end();
 });
 
 const getUrgent = asyncHandler(async (req, res) => {
@@ -38,6 +41,7 @@ const getUrgent = asyncHandler(async (req, res) => {
     return todo.category === "urgent";
   });
   res.json({ status: true, data: urgentTodoList });
+  res.end();
 });
 
 // *======================================================================================
@@ -58,6 +62,7 @@ const createTodoTask = asyncHandler(async (req, res) => {
     status: true,
     message: "Task is created",
   });
+  res.end();
 });
 
 // *======================================================================================
@@ -91,6 +96,7 @@ const updatedTask = asyncHandler(async (req, res) => {
     status: true,
     message: "Updated",
   });
+  res.end();
 });
 
 // *======================================================================================
@@ -114,6 +120,7 @@ const deleteTask = asyncHandler(async (req, res) => {
     status: true,
     message: "Deleted",
   });
+  res.end();
 });
 
 // *======================================================================================

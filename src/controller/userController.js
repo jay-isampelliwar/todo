@@ -65,6 +65,7 @@ const userDetails = asyncHandler(async (req, res) => {
       message: "User Details",
       data: null,
     });
+    res.end();
   }
   res.json({
     status: true,
@@ -76,6 +77,7 @@ const userDetails = asyncHandler(async (req, res) => {
       email: user.email,
     },
   });
+  res.end();
 });
 
 const createUser = asyncHandler(async (req, res) => {
@@ -110,6 +112,7 @@ const createUser = asyncHandler(async (req, res) => {
     status: true,
     message: "Please Verify OTP",
   });
+  res.end();
 });
 
 const verifyUserOTP = asyncHandler(async (req, res) => {
@@ -131,6 +134,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
       status: true,
       message: "OTP Verified",
     });
+    res.end();
   } else {
     res.status(400);
     throw new Error("Wrong OTP");
@@ -158,6 +162,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
     status: true,
     message: "Password is updated please Login with new password",
   });
+  res.end();
 });
 
 module.exports = {
