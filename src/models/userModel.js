@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const userModel = new Schema(
   {
-    username: {
+    name: {
       type: String,
       required: [true, "Please add Contact name"],
     },
@@ -22,7 +22,7 @@ const userModel = new Schema(
     },
     verification: {
       type: String,
-      enum: ["Not Verified", "Pending", "Verified"],
+      enum: ["Not Verified", "Verified"],
       default: "Not Verified",
     },
   },
