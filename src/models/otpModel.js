@@ -13,6 +13,10 @@ const otpModel = new Schema({
     type: String,
     required: true,
   },
+  newUser: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = model("OTP", otpModel);

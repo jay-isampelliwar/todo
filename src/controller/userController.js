@@ -91,12 +91,12 @@ const createUser = asyncHandler(async (req, res) => {
     password: hashedPass,
   });
 
-  await newUser.save();
   const otp = randomOtp();
   const newOTP = new OTP({
     user_id: newUser.id,
     otp: otp,
     email,
+    newUser,
   });
 
   newOTP.save();
@@ -118,6 +118,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
   }
 
   if (otpModel.otp === otp) {
+    otp.newUser.save();
     await OTP.deleteOne({ otp: otp });
     const user = await User.findOne({ email: email });
     user.verification = "Verified";
