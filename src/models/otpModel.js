@@ -1,10 +1,6 @@
 const { Schema, model } = require("mongoose");
 
 const otpModel = new Schema({
-  user_id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -14,7 +10,7 @@ const otpModel = new Schema({
     required: true,
   },
   newUser: {
-    type: Schema.Types.ObjectId,
+    type: Object,
     ref: "User",
   },
 });

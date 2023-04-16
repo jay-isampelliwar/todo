@@ -11,15 +11,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({
       status: false,
-      message: "User Not Found",
-      token: null,
-    });
-  }
-
-  if (user.verification !== "Verified") {
-    return res.status(404).json({
-      status: false,
-      message: "Please Verify Your account",
+      message: "You don't have account",
       token: null,
     });
   }
@@ -67,7 +59,7 @@ const userDetails = asyncHandler(async (req, res) => {
     message: "User Details",
     data: {
       status: true,
-      username: user.username,
+      name: user.name,
       phone: user.phone,
       email: user.email,
     },
@@ -75,7 +67,7 @@ const userDetails = asyncHandler(async (req, res) => {
 });
 
 const createUser = asyncHandler(async (req, res) => {
-  const { username, phone, email, password } = req.body;
+  const { name, phone, email, password } = req.body;
 
   const user = await User.findOne({ email: email });
   if (user) {
@@ -84,16 +76,17 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   const hashedPass = await bcrypt.hash(password, 10);
-  const newUser = new User({
-    username,
+
+  const newUser = {
+    name,
     phone,
     email,
     password: hashedPass,
-  });
+  };
 
   const otp = randomOtp();
+
   const newOTP = new OTP({
-    user_id: newUser.id,
     otp: otp,
     email,
     newUser,
@@ -116,12 +109,17 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Invalid Email");
   }
-
   if (otpModel.otp === otp) {
-    otp.newUser.save();
-    await OTP.deleteOne({ otp: otp });
-    const user = await User.findOne({ email: email });
-    user.verification = "Verified";
+    await OTP.deleteOne({ email: email });
+
+    const user = new User({
+      email: otpModel.newUser.email,
+      phone: otpModel.newUser.phone,
+      password: otpModel.newUser.password,
+      name: otpModel.newUser.name,
+      verification: "Verified",
+    });
+
     user.save();
 
     return res.json({
