@@ -16,10 +16,6 @@ const todoTaskModel = new Schema(
       required: true,
       unique: true,
     },
-    isDone: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true }
 );

@@ -11,7 +11,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({
       status: false,
-      message: "You don't have account",
+      message: "You don't have an account",
       token: null,
     });
   }
@@ -38,7 +38,7 @@ const loginUser = asyncHandler(async (req, res) => {
   } else {
     return res.status(400).json({
       status: false,
-      message: "Invalid Credentials",
+      message: "Email or Password is Wrong",
       token: null,
     });
   }
@@ -50,7 +50,7 @@ const userDetails = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({
       status: false,
-      message: "User Details",
+      message: "use not found.",
       data: null,
     });
   }
@@ -97,7 +97,7 @@ const createUser = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     status: true,
-    message: "Please Verify OTP",
+    message: "OTP is sent to your email.",
   });
 });
 
@@ -107,7 +107,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
 
   if (!otpModel) {
     res.status(404);
-    throw new Error("Invalid Email");
+    throw new Error("Email not found");
   }
   if (otpModel.otp === otp) {
     await OTP.deleteOne({ email: email });
@@ -124,11 +124,11 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
 
     return res.json({
       status: true,
-      message: "OTP Verified",
+      message: "Your OTP Verified, Please Login.",
     });
   } else {
     res.status(400);
-    throw new Error("Wrong OTP");
+    throw new Error("Your OTP is wrong.");
   }
 });
 
@@ -137,7 +137,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(400);
-    throw new Error("User not found");
+    throw new Error("Your entered wrong email, Try Again");
   }
 
   const hashedPass = await bcrypt.hash(req.body.newPassword, 10);
